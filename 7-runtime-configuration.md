@@ -557,3 +557,41 @@ qos.user_data.value[2] = 0x01;
 | publisherqos=name     | 參照[publisherqos/*]段落                                                                                  | 參照表3-3      |
 | subscriberqos=name    | 參照[subscriberqos/*]段落                                                                                 | 參照表3-4      |
 | config                | 參考傳送設定中[config/*]段落。這用來決定一個終端的網路位址。                                              |                |
+
+
+## 7-5 日誌紀錄
+
+在預設設定中，OpenDDS框架會只在無法被返回代碼表示的重大錯誤發生時才會寫日誌。
+OpenDDS使用者透過控制DCPS以及傳輸層設定可以得到很大量的日誌紀錄。
+
+### DCPS層日誌
+
+DCPSDebugLevel參數會決定DCPS層的日誌行為。
+也可以在程式碼中如此指定：
+```c++
+OpenDDS::DCPS::set_DCPS_debug_level(level)
+```
+
+預設的設定值為0，以下為0~10的行為：
+* 0 只有在返回代碼無法表現的重大錯誤發生時寫日誌(也就是幾乎沒有)。
+* 1 一旦程序發生警告時寫日誌。
+* 2 每個DDS實例產生時都會進行日誌寫入。
+* 4 日誌會關聯到管理者界面。
+* 6 每幾個取樣讀寫時都會進行日誌
+* 8 每一個取樣讀寫時都會進行日誌
+* 10 每個取樣讀寫時都可能會有多次日誌寫入
+
+### 傳送層日誌
+
+OpenDDS傳送層日誌是由DPCSTransportDebugLevel參數控制的。
+如果想要在OpenDDS應用程式調用傳送層日誌，在指令中加入這行參數：
+```shell
+-DCPSTransportDebugLevel level
+```
+傳送層日誌等級也可以用程式碼來調用：
+```c++
+OpenDDS::DCPS::Transport_debug_level = level;
+```
+日誌等級為0~5，用高就會顯示越多提示。
+
+* 注意：傳送層日誌等級6是能有效會產生系統追蹤日誌。但我們並不建議使用至個等級因為過量的訊息將會被產生而且大多只有開發者用的到。使用等級6的日誌等級需要仙指定DDS_BLD_DEBUG_LEVEL 巨集到6並且重新建置OpenDDS。
